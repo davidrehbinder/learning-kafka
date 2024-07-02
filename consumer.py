@@ -11,13 +11,12 @@ parser = argparse.ArgumentParser()
 group = parser.add_mutually_exclusive_group()
 # These two are mutually exclusive
 group.add_argument('-t', '--topics',
-                    action='store_true',
-                    help='''Show list of topics the user is authorized
-                    to view.'''
-                    )
-group.add_argument('-l', '--listen',
                     help='''One or more topics to subscribe to,
                     separated by commas.''')
+group.add_argument('-l', '--list',
+                    action='store_true',
+                    help='''Show list of topics the user is authorized
+                    to view.''')
 
 # Print error if no arguments
 if len(sys.argv) == 1:
@@ -28,8 +27,8 @@ if len(sys.argv) == 1:
 args = parser.parse_args()
 
 # Get list of topics if we're listening
-if (args.listen != None):
-    topics = args.listen.split(sep=',')
+if (args.topics != None):
+    topics = args.topics.split(sep=',')
 
 # Create KafkaConsumer instance
 consumer = KafkaConsumer(
@@ -65,10 +64,11 @@ def list_topics():
         partitions = list(consumer.partitions_for_topic(topic))
         print('* Topic:', topic)
         print('  * Partitions:', partitions)
+    consumer.close
 
 # Listen to messages
-if args.listen != None:
+if args.topics != None:
     listen()
 
-if args.topics != False:
+if args.list != False:
     list_topics()
