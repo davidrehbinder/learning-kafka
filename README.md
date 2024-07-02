@@ -2,7 +2,7 @@
 
 A quick way to get a local Kafka instance up and running using Docker.
 
-Related blog post: https://sahansera.dev/setting-up-kafka-locally-for-testing/
+Related blog post: [https://sahansera.dev/setting-up-kafka-locally-for-testing/]
 
 ## Requirements
 
@@ -19,6 +19,7 @@ docker-compose up -d
 ```
 
 ### Producer
+
 ```sh
 
 docker exec --interactive --tty broker \
@@ -42,6 +43,7 @@ Or `./consumer.py -t comma-separated-list-of-topics`, which listens to all parti
 ## Todo
 
 Add more functionality to the Python scripts, like:
+
 * Only listening to a specific partition of a topic.
 * ACLs.
 * A bit more interactivity in `producer.py` (changing topics/partitions on the fly, etc)
