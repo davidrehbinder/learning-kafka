@@ -42,6 +42,7 @@ Or `./consumer.py -t comma-separated-list-of-topics`, which listens to all parti
 ## Todo
 
 Add more functionality to the Python scripts, like:
-* Only listening to a specific partition.
+* Only listening to a specific partition of a topic.
 * ACLs.
+* A bit more interactivity in `producer.py` (changing topics/partitions on the fly, etc)
 * Probably more?
