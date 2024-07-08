@@ -5,15 +5,22 @@ import sys
 
 from datetime import datetime as d
 from kafka import KafkaConsumer
+from kafka.structs import TopicPartition
 
 # Get arguments
 parser = argparse.ArgumentParser()
-group = parser.add_mutually_exclusive_group()
-# These two are mutually exclusive
-group.add_argument('-t', '--topics',
-                    help='''One or more topics to subscribe to,
-                    separated by commas.''')
-group.add_argument('-l', '--list',
+
+parser.add_argument('--debug', action='store_true')
+
+subparsers = parser.add_subparsers(dest='command')
+topics = subparsers.add_parser('topics', help='''Topics to listen to.''')
+topics.add_argument('topics', nargs='+')
+topics.add_argument('-p', '--partition',
+                    nargs='*',
+                    const=None,
+                    help='''Partition to listen to. This cannot be selected
+                    if more than one topic has been chosen.''')
+parser.add_argument('-l', '--list',
                     action='store_true',
                     help='''Show list of topics the user is authorized
                     to view.''')
@@ -26,10 +33,6 @@ if len(sys.argv) == 1:
 # And parse the arguments.
 args = parser.parse_args()
 
-# Get list of topics if we're listening
-if (args.topics != None):
-    topics = args.topics.split(sep=',')
-
 # Create KafkaConsumer instance
 consumer = KafkaConsumer(
     bootstrap_servers=['localhost:9092'],
@@ -39,9 +42,26 @@ consumer = KafkaConsumer(
     value_deserializer=lambda x: x.decode('utf-8')
 )
 
+if args.command == 'topics':
+    topic_list = args.topics
+    if len(topic_list) > 1:
+        if args.partition != None:
+            print('Partition selection can only be done with one selected topic.')
+            exit(1)
+
 def listen():
     # Subscribe to topics
-    consumer.subscribe(topics=topics)
+    if len(topic_list) > 1:
+        consumer.subscribe(topic_list)
+    else:
+        topic = topic_list[0]
+        if args.partition != None:
+            topicpartitions = [] 
+            for partition in args.partition:
+                topicpartitions.append(TopicPartition(topic, int(partition)))
+            consumer.assign(topicpartitions)
+        else:
+            consumer.subscribe(topic)
     try:
         for msg in consumer:
             print('Topic: {} | Partition: {} | Offset: {} | Key: {} | Value: {} | Timestamp: {}'
@@ -67,7 +87,7 @@ def list_topics():
     consumer.close
 
 # Listen to messages
-if args.topics != None:
+if args.command == 'topics':
     listen()
 
 if args.list != False:

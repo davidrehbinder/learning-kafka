@@ -6,7 +6,6 @@ import sys
 from datetime import datetime as d
 from kafka import KafkaAdminClient, KafkaConsumer, KafkaProducer
 from kafka.admin.new_partitions import NewPartitions
-from textwrap import dedent
 
 # Get arguments
 parser = argparse.ArgumentParser()

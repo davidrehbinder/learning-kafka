@@ -27,7 +27,9 @@ kafka-console-producer --bootstrap-server localhost:9092 \
                        --topic example-topic
 ```
 
-Or `./producer.py -t your-topic-here -w` (optionally including partition ID after `-w`, the default is `0`). `producer.py` can also be used with the `-p` flag, which allows you to add partitions (input the number of partitions to split the topic into).
+Or:
+* `./producer.py -t your-topic-here -w` (optionally including partition ID after `-w`, the default is `0`) lets you write to the specified topic.
+* `./producer.py -p <number>` allows you to add partitions, the number specifies how many partitions to split the topic into.
 
 ### Consumer
 
@@ -38,13 +40,14 @@ kafka-console-consumer --bootstrap-server localhost:9092 \
                        --from-beginning
 ```
 
-Or `./consumer.py -t comma-separated-list-of-topics`, which listens to all partitions of the specified topics. `consumer.py` can also be used with the `-l` flag, which lists the topics the user is authorized to view and the partitions for each topic.
+Or:
+* `./consumer.py topics <topics>`, which listens to all partitions of the specified (space-separated) topics. If you only specify one topic, you can add the `-p` flag, which specifies which partition(s) to listen to. 
+* `./consumer.py -l` lists the topics the user is authorized to view and the partitions for each topic.
 
 ## Todo
 
 Add more functionality to the Python scripts, like:
 
-* Only listening to a specific partition of a topic.
 * ACLs.
 * A bit more interactivity in `producer.py` (changing topics/partitions on the fly, etc)
 * Probably more?
