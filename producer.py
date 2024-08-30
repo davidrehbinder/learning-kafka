@@ -13,12 +13,21 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-t', '--topic',
                     help='''Select topic.'''
                     )
-group = parser.add_mutually_exclusive_group()
-group.add_argument('-p', '--partition', nargs=1, type=int,
-                   help='''How many partitions to split the topic into.''')
-group.add_argument('-w', '--write', nargs='?', type=int, const=0,
-                   help='''To interactively write to the topic. Argument is
-                   partition ID to write to (default is 0).''')
+write = parser.add_argument_group('write', '''Writes to the topic.''')
+write.add_argument('-w', '--write', nargs='?', type=int, const=0,
+                   metavar='PARTITION',
+                   help='''Write to the specified topic. The optional argument
+                   is the partition ID to write to. (Default partition is 0.)''')
+write.add_argument('-k', '--key', nargs=1, type=str,
+                   help='''Explicitly set key for the messages so that they
+                   won't be sent to random partitions. (Optional, default key
+                   is None.)''')
+
+partition = parser.add_argument_group('partition', '''Partitions the topic.''')
+partition.add_argument('-p', '--partition', nargs=1, type=int,
+                       metavar='PARTITIONS',
+                       help='''How many partitions to split the topic into.''')
+
 
 # Print error if no arguments
 if len(sys.argv) == 1:
@@ -29,6 +38,11 @@ if len(sys.argv) == 1:
 args = parser.parse_args()
 
 topic = args.topic
+
+key = None
+
+if (args.key != None):
+    key = args.key[0]
 
 # Get number of partitions for the topic (since this is used for
 # both functionalities.)
@@ -70,7 +84,9 @@ try:
     print('sending to topic', str(topic) + ', partition', str(partition))
     while True:
         data = input()
-        producer.send(topic, partition=partition, value=data.encode('utf-8'))
+        if key != None:
+            key = key.encode('utf-8')
+        producer.send(topic, partition=partition, key=key, value=data.encode('utf-8'))
 except KeyboardInterrupt:
     pass
 finally:

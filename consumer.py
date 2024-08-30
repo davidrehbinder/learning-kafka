@@ -10,16 +10,24 @@ from kafka.structs import TopicPartition
 # Get arguments
 parser = argparse.ArgumentParser()
 
-parser.add_argument('--debug', action='store_true')
-
 subparsers = parser.add_subparsers(dest='command')
-topics = subparsers.add_parser('topics', help='''Topics to listen to.''')
+topics = subparsers.add_parser('topics', help='''Topics to listen to, separated
+                               by spaces.\n
+                               Has the arguments \'-p\' for which partition
+                               to listen to (only if only one topic is chosen)
+                               and \'-f\' to only follow the latest messages
+                               (optional). See \'consumer.py topics -h\' for
+                               more detailed help.''')
 topics.add_argument('topics', nargs='+')
 topics.add_argument('-p', '--partition',
-                    nargs='*',
+                    nargs='?',
                     const=None,
                     help='''Partition to listen to. This cannot be selected
-                    if more than one topic has been chosen.''')
+                    if more than one topic has been chosen. (Optional.)''')
+topics.add_argument('-f', '--follow',
+                    action='store_true',
+                    help='''Commit and set offset to \'latest\'. (Optional.)''')
+
 parser.add_argument('-l', '--list',
                     action='store_true',
                     help='''Show list of topics the user is authorized
@@ -33,12 +41,24 @@ if len(sys.argv) == 1:
 # And parse the arguments.
 args = parser.parse_args()
 
+auto_commit = False
+offset = 'earliest'
+
+if ('follow' in args):
+    if args.follow == True:
+        auto_commit = True
+        offset = 'latest'
+    elif args.follow == False:
+        auto_commit = False
+        offset = 'earliest'
+
 # Create KafkaConsumer instance
 consumer = KafkaConsumer(
     bootstrap_servers=['localhost:9092'],
-    auto_offset_reset='earliest',
-    enable_auto_commit=False,
+    auto_offset_reset=offset,
+    enable_auto_commit=auto_commit,
     group_id=None,
+    key_deserializer=lambda k: k.decode('utf-8') if k is not None else k,
     value_deserializer=lambda x: x.decode('utf-8')
 )
 

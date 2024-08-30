@@ -28,7 +28,7 @@ kafka-console-producer --bootstrap-server localhost:9092 \
 ```
 
 Or:
-* `./producer.py -t your-topic-here -w` (optionally including partition ID after `-w`, the default is `0`) lets you write to the specified topic.
+* `./producer.py -t your-topic-here -w` (optionally including partition ID after `-w`, the default is `0`) lets you write to the specified topic. If you use the flag `-k`, this will set an explicit key for the messages.
 * `./producer.py -p <number>` allows you to add partitions, the number specifies how many partitions to split the topic into.
 
 ### Consumer
@@ -41,7 +41,7 @@ kafka-console-consumer --bootstrap-server localhost:9092 \
 ```
 
 Or:
-* `./consumer.py topics <topics>`, which listens to all partitions of the specified (space-separated) topics. If you only specify one topic, you can add the `-p` flag, which specifies which partition(s) to listen to. 
+* `./consumer.py topics <topics>`, which listens to all partitions of the specified (space-separated) topics. If you only specify one topic, you can use the `-p` flag, which specifies which partition(s) to listen to.  If you want to commit and get messages with the latest offset instead, use the `-f` flag.
 * `./consumer.py -l` lists the topics the user is authorized to view and the partitions for each topic.
 
 ## Todo
@@ -49,5 +49,6 @@ Or:
 Add more functionality to the Python scripts, like:
 
 * ACLs.
-* A bit more interactivity in `producer.py` (changing topics/partitions on the fly, etc)
+* A bit more interactivity in `producer.py` (changing topics/partitions on the fly, etc).
+* Move configuration for producer and consumer Python scripts to separate files rather than hardcoded.
 * Probably more?
