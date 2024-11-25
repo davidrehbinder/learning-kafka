@@ -6,6 +6,7 @@ import sys
 from datetime import datetime as d
 from kafka import KafkaAdminClient, KafkaConsumer, KafkaProducer
 from kafka.admin.new_partitions import NewPartitions
+from kafka.admin.new_topic import NewTopic
 
 # Get arguments
 parser = argparse.ArgumentParser()
@@ -47,7 +48,14 @@ if (args.key != None):
 # Get number of partitions for the topic (since this is used for
 # both functionalities.)
 consumer = KafkaConsumer(bootstrap_servers=['localhost:9092'])
-partitions = list(consumer.partitions_for_topic(topic))
+if (consumer.partitions_for_topic(topic) == None):
+    admin_client = KafkaAdminClient(bootstrap_servers=['localhost:9092'])
+    new_topic = admin_client.create_topics({
+        topic: NewTopic(name=topic, num_partitions=1)
+    })
+    admin_client.close()
+else:
+    partitions = list(consumer.partitions_for_topic(topic))
 consumer.close()
 
 # We check if we're going to partition the topic.
