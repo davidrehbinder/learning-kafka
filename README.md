@@ -6,7 +6,7 @@ Related blog post: [https://sahansera.dev/setting-up-kafka-locally-for-testing/]
 
 ## Requirements
 
-* Docker
+* Docker and/or Podman.
 * Python 3 (I wrote the scripts in Python 3.12.1, I'm uncertain how far back the compatibility goes but it should be a fair bit)
 * The [`kafka-python-ng`](https://github.com/wbarnha/kafka-python-ng) Kafka client (due to [issues](https://github.com/dpkp/kafka-python/issues/2440) with the original `kafka-python` client)
 
@@ -16,6 +16,12 @@ Run at the root:
 
 ```sh
 docker-compose up -d
+```
+
+Or:
+
+```sh
+podman compose up -d
 ```
 
 ### Producer
