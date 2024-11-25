@@ -35,7 +35,7 @@ kafka-console-producer --bootstrap-server localhost:9092 \
 
 Or:
 * `./producer.py -t your-topic-here -w` (optionally including partition ID after `-w`, the default is `0`) lets you write to the specified topic. If you use the flag `-k`, this will set an explicit key for the messages.
-* `./producer.py -p <number>` allows you to add partitions, the number specifies how many partitions to split the topic into.
+* `./producer.py -t your-topic-here -p <number>` allows you to add partitions, the number specifies how many partitions to split the topic into.
 
 ### Consumer
 
