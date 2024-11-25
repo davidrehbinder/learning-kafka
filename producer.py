@@ -51,7 +51,7 @@ consumer = KafkaConsumer(bootstrap_servers=['localhost:9092'])
 if (consumer.partitions_for_topic(topic) == None):
     admin_client = KafkaAdminClient(bootstrap_servers=['localhost:9092'])
     new_topic = admin_client.create_topics({
-        topic: NewTopic(name=topic, num_partitions=1)
+        topic: NewTopic(name=topic, num_partitions=1, replication_factor=1)
     })
     admin_client.close()
 else:
