@@ -99,12 +99,15 @@ def listen():
 
 def list_topics():
     topic_list = consumer.topics()
-    print('Total number of topics:', len(topic_list))
-    for topic in topic_list:
-        partitions = list(consumer.partitions_for_topic(topic))
-        print('* Topic:', topic)
-        print('  * Partitions:', partitions)
-    consumer.close
+    if len(topic_list) == 0:
+        print('There are no topics this user can access.')
+    else:
+        print('Total number of topics:', len(topic_list))
+        for topic in topic_list:
+            partitions = list(consumer.partitions_for_topic(topic))
+            print('* Topic:', topic)
+            print('  * Partitions:', partitions)
+    consumer.close()
 
 # Listen to messages
 if args.command == 'topics':

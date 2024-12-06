@@ -29,7 +29,6 @@ partition.add_argument('-p', '--partition', nargs=1, type=int,
                        metavar='PARTITIONS',
                        help='''How many partitions to split the topic into.''')
 
-
 # Print error if no arguments
 if len(sys.argv) == 1:
     parser.print_help(sys.stderr)
@@ -39,6 +38,10 @@ if len(sys.argv) == 1:
 args = parser.parse_args()
 
 topic = args.topic
+
+# Error out if we have neither writing to a topic or splitting it. 
+if topic and not args.partition and (args.write == None):
+    exit('You need to select whether to write or add partition(s)') 
 
 key = None
 
@@ -55,6 +58,7 @@ if (consumer.partitions_for_topic(topic) == None):
     new_topic = admin_client.create_topics(new_topics=new_topic_list)
     print(new_topic)
     admin_client.close()
+    partitions = [0]
 else:
     partitions = list(consumer.partitions_for_topic(topic))
 consumer.close()
